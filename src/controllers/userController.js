@@ -14,7 +14,10 @@ const getSavedRecipes = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id)
       .select('savedRecipes')
-      .populate('savedRecipes');
+      .populate({
+        path: 'savedRecipes',
+        populate: { path: 'author', select: 'name avatarUrl' }
+      });
     if (!user) return res.status(404).json({ error: 'User not found' });
     res.json(user.savedRecipes);
   } catch (err) {
