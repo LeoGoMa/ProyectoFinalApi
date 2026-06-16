@@ -8,9 +8,10 @@ const getRecipes = async (req, res, next) => {
 
     const filter = {};
     if (req.query.category) filter.category = req.query.category;
+    if (req.query.author)   filter.author   = req.query.author;
 
     const [recipes, total] = await Promise.all([
-      Recipe.find(filter).skip(skip).limit(limit).populate('author', 'name avatarUrl'),
+      Recipe.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('author', 'name avatarUrl'),
       Recipe.countDocuments(filter)
     ]);
 
@@ -53,6 +54,7 @@ const searchRecipes = async (req, res, next) => {
 const createRecipe = async (req, res, next) => {
   try {
     const recipe = await Recipe.create(req.body);
+    await recipe.populate('author', 'name avatarUrl');
     res.status(201).json(recipe);
   } catch (err) {
     next(err);
