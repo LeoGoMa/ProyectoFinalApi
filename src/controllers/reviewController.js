@@ -19,6 +19,7 @@ const createReview = async (req, res, next) => {
       rating: req.body.rating,
       comment: req.body.comment
     });
+    await review.populate('user', 'name avatarUrl');
     res.status(201).json(review);
   } catch (err) {
     next(err);
